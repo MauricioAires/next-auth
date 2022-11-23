@@ -1,5 +1,5 @@
 <h1 align="center">
-    Nexy Auth - Next.js
+    Next Auth - Next.js
 </h1>
 <p align="center">Autenticação e controle de permissões com Next.js</p>
 
@@ -11,7 +11,7 @@
 
 ## Sobre o projeto
 
-O projeto tem como objetivo o estudo e desenvolvimento de uma aplicação em ReactJS com NextJS, e aprovundar meus conhecimento sobre autenticação e controle de permissões com Next.js
+O projeto tem como objetivo o estudo e desenvolvimento de uma aplicação em ReactJS com NextJS, e aprofundar meus conhecimento sobre autenticação e controle de permissões com Next.js
 
 ---
 

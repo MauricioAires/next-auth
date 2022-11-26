@@ -1,5 +1,12 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
 import Router from 'next/router'
+import { setCookie, parseCookies } from 'nookies'
 import { api } from '../../services/api'
 
 type User = {
@@ -14,7 +21,8 @@ export type SignInCredentials = {
 }
 
 type AuthContextData = {
-  signIn(data: any): any
+  signIn(data: SignInCredentials): Promise<void>
+  user: User
   isAuthenticated: boolean
 }
 
@@ -26,20 +34,57 @@ interface AuthProviderProps {
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>({} as User)
+  const isAuthenticated = !!user
 
-  const isAuthenticated = false
+  const getUser = async () => {
+    try {
+      await api.get('/me').then((response) => {
+        setUser(response.data)
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    const { 'nextauth.token': token } = parseCookies()
+
+    if (token) {
+      getUser()
+    }
+  }, [])
 
   async function signIn({ email, password }: SignInCredentials) {
     try {
       const response = await api.post('/sessions', { email, password })
 
-      const { permissions, roles } = response.data
+      const { token, refreshToken, permissions, roles } = response.data
+
+      setCookie(undefined, 'nextauth.token', token, {
+        maxAge: 60 * 60 * 24 * 30, // 30 dias
+        path: '/'
+      })
+
+      setCookie(undefined, 'nextauth.refreshtoken', refreshToken, {
+        maxAge: 60 * 60 * 24 * 30, // 30 dias
+        path: '/'
+      })
+
+      /**
+       * @description locais para armazenar dados temposrairo
+       *
+       * sessionStorage
+       * localStorage
+       * cookie
+       */
 
       setUser({
         email,
         permissions,
         roles
       })
+
+      api.defaults.headers['Authorization'] = `Bearer ${token}`
 
       Router.push('/dashboard')
     } catch (error) {
@@ -51,6 +96,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider
       value={{
         isAuthenticated: isAuthenticated,
+        user,
         signIn
       }}
     >

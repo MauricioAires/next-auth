@@ -19,17 +19,14 @@ export function LoginTemplate() {
   }
 
   return (
-    <div className="h-screen flex">
-      <div className="flex w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 i justify-around items-center">
-        <div>
-          <h1 className="text-white font-bold text-4xl font-sans">Next Auth</h1>
-          <p className="text-white mt-1">
-            Authentication and control of permissions with NextJs
-          </p>
-        </div>
-      </div>
-      <div className="flex w-1/2 justify-center items-center bg-white">
-        <form onClick={handleSubmit} className="bg-green p-10 w-1/2">
+    <div className="flex justify-center content-center">
+      <div className="w-1/2 p-10">
+        <h1 className="font-bold text-4xl font-sans">Next Auth</h1>
+        <p className=" mt-1">
+          Authentication and control of permissions with NextJs
+        </p>
+
+        <form onSubmit={handleSubmit} className="bg-green ">
           <h1 className="text-gray-800  font-bold text-2xl mb-1">
             Hello Again!
           </h1>

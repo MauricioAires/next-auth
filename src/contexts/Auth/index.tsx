@@ -6,8 +6,9 @@ import React, {
   useState
 } from 'react'
 import Router from 'next/router'
-import { setCookie, parseCookies } from 'nookies'
-import { api } from '../../services/api'
+import { setCookie, parseCookies, destroyCookie } from 'nookies'
+import { api } from '../../services/apiClient'
+import { AuthTokenError } from '../../services/errors/AuthTokenError'
 
 type User = {
   email: string
@@ -28,6 +29,13 @@ type AuthContextData = {
 
 export const AuthContext = createContext({} as AuthContextData)
 
+export function signOut() {
+  destroyCookie(undefined, 'nextauth.token')
+  destroyCookie(undefined, 'nextauth.refreshtoken')
+
+  Router.push('/')
+}
+
 interface AuthProviderProps {
   children: ReactNode
 }
@@ -36,21 +44,18 @@ function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>({} as User)
   const isAuthenticated = !!user
 
-  const getUser = async () => {
-    try {
-      await api.get('/me').then((response) => {
-        setUser(response.data)
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   useEffect(() => {
     const { 'nextauth.token': token } = parseCookies()
 
     if (token) {
-      getUser()
+      api
+        .get('/me')
+        .then((response) => {
+          setUser(response.data)
+        })
+        .catch(() => {
+          signOut()
+        })
     }
   }, [])
 

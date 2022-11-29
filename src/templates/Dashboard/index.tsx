@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { Can } from '../../components/Can'
 import { useAuth } from '../../contexts/Auth'
 import { api } from '../../services/apiClient'
 
@@ -16,5 +17,21 @@ export function DashboardTemplate() {
       })
   }, [])
 
-  return <h1>Dashboard : {user?.email} </h1>
+  return (
+    <>
+      <h1>Dashboard : {user?.email} </h1>
+
+      <Can permissions={['metrics.list']}>
+        <div>Métricas</div>
+      </Can>
+
+      <Can roles={['administrator']}>
+        <div>Faturamento</div>
+      </Can>
+
+      <Can roles={['super-administrator']}>
+        <div>Rotas</div>
+      </Can>
+    </>
+  )
 }

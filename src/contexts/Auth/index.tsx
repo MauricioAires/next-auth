@@ -8,9 +8,8 @@ import React, {
 import Router from 'next/router'
 import { setCookie, parseCookies, destroyCookie } from 'nookies'
 import { api } from '../../services/apiClient'
-import { AuthTokenError } from '../../services/errors/AuthTokenError'
 
-type User = {
+export type User = {
   email: string
   permissions: string[]
   roles: string[]
@@ -23,7 +22,7 @@ export type SignInCredentials = {
 
 type AuthContextData = {
   signIn(data: SignInCredentials): Promise<void>
-  user: User
+  user: User | undefined
   isAuthenticated: boolean
 }
 
@@ -41,8 +40,8 @@ interface AuthProviderProps {
 }
 
 function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User>({} as User)
-  const isAuthenticated = !!user
+  const [user, setUser] = useState<User>()
+  let isAuthenticated = !!user
 
   useEffect(() => {
     const { 'nextauth.token': token } = parseCookies()

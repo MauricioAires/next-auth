@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/Auth'
 import { api } from '../../services/apiClient'
 
 export function DashboardTemplate() {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
 
   useEffect(() => {
     api
@@ -20,6 +20,8 @@ export function DashboardTemplate() {
   return (
     <>
       <h1>Dashboard : {user?.email} </h1>
+
+      <button onClick={signOut}>Sign out</button>
 
       <Can permissions={['metrics.list']}>
         <div>Métricas</div>
